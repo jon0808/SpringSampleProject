@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+    <context:annotation-config/>
+    <context:component-scan base-package="com.sample.web.*"/>
+    <!-- 
+               response
+         USER ==========> DispatcherServlet ===> HandlerMapping
+                                            ===> ~Controller   <===> DAO
+               request                          ===============
+                                                                                                         결과값 ==> ViewResolver
+     -->
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+     p:prefix="/"
+     p:suffix=".jsp"
+    />
+    
+    <!-- 업로드 기능 추가 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+     p:maxUploadSize="52428800"
+    />
+</beans>

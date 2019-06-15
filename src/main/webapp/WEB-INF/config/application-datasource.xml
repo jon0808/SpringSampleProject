@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.2.xsd">
+	<util:properties id="db" location="/WEB-INF/config/db.properties"></util:properties>
+	<util:properties id="isak" location="/WEB-INF/config/isak.properties"></util:properties>
+	<bean id="ds" 
+		class="org.apache.commons.dbcp2.BasicDataSource"
+		p:driverClassName="#{db['driver']}"
+		p:url="#{db['url']}"
+		p:username="#{db['username']}"
+		p:password="#{db['password']}"
+	/>
+	<bean id="ssf"
+		class="org.mybatis.spring.SqlSessionFactoryBean"
+		p:dataSource-ref="ds"
+		p:configLocation="classpath:resources/mybatis-config.xml"
+		p:mapperLocations="classpath:com/sample/web/*/sqlmap/*.xml"	
+	/>	
+	
+	<!-- SqlSession -->
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate" destroy-method="clearCache">
+		<constructor-arg name="sqlSessionFactory" ref="ssf" />
+	</bean>
+	
+	<!-- 트랜잭션 매니저 bean 을 등록합니다. -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+		p:dataSource-ref="ds"
+	/>
+	<!-- 아노테이션 기반의 트랜잭션을 사용합니다. -->
+	<tx:annotation-driven transaction-manager="transactionManager"/> 
+</beans>
